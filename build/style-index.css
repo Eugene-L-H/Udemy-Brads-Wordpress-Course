@@ -1259,7 +1259,8 @@ body.admin-bar .search-overlay {
 }
 
 .body-no-scroll {
-  overflow: hidden;
+  overflow-x: hidden;
+  position: fixed;
 }
 
 .professor-cards {

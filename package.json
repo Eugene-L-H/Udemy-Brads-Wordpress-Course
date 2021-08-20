@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "build": "wp-scripts build",
     "start": "wp-scripts start",
@@ -17,6 +18,8 @@
     "@glidejs/glide": "^3.4.1",
     "@wordpress/scripts": "*",
     "axios": "^0.21.1",
-    "normalize.css": "^8.0.1"
+    "normalize.css": "^8.0.1",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
   }
 }
