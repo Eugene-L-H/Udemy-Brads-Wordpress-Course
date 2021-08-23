@@ -3999,7 +3999,7 @@ class Search {
           this.isSpinnerVisible = true;
         }
 
-        this.typingTimer = setTimeout(this.getResults.bind(this), 2000);
+        this.typingTimer = setTimeout(this.getResults.bind(this), 750);
       } else {
         this.resultsDiv.html('');
         this.isSpinnerVisible = false;
@@ -4010,16 +4010,41 @@ class Search {
   }
 
   getResults() {
-    jquery__WEBPACK_IMPORTED_MODULE_0___default.a.getJSON(universityData.root_url + '/wp-json/wp/v2/posts?search=' + this.searchField.val(), posts => {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default.a.when(jquery__WEBPACK_IMPORTED_MODULE_0___default.a.getJSON(universityData.root_url + '/wp-json/wp/v2/posts?search=' + this.searchField.val()), jquery__WEBPACK_IMPORTED_MODULE_0___default.a.getJSON(universityData.root_url + '/wp-json/wp/v2/pages?search=' + this.searchField.val()), jquery__WEBPACK_IMPORTED_MODULE_0___default.a.getJSON(universityData.root_url + '/wp-json/wp/v2/event?search=' + this.searchField.val()), jquery__WEBPACK_IMPORTED_MODULE_0___default.a.getJSON(universityData.root_url + '/wp-json/wp/v2/professor?search=' + this.searchField.val()), jquery__WEBPACK_IMPORTED_MODULE_0___default.a.getJSON(universityData.root_url + '/wp-json/wp/v2/program?search=' + this.searchField.val())).then((posts, pages, events, profs, programs) => {
+      var combinedResults = posts[0].concat(pages[0]);
+      combinedResults = combinedResults.concat(events[0]);
+      combinedResults = combinedResults.concat(profs[0]);
+      combinedResults = combinedResults.concat(programs[0]);
       this.resultsDiv.html(`
                 <h2 class="search-overlay__section-title">General Information</h2>
-                ${posts.length ? '<ul class="link-list min-list">' : '<p>No results</p>'}
-                    ${posts.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join('')}
-                ${posts.length ? '</ul>' : ''}
+                ${combinedResults.length ? '<ul class="link-list min-list">' : '<p>No results</p>'}
+                ${combinedResults.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join('')}
+                ${combinedResults.length ? '</ul>' : ''}
             `);
       this.isSpinnerVisible = false;
+    }, () => {
+      this.resultsDiv.html("<p>Unexpected error; Please try again.</p>");
     });
-  }
+  } //     $.getJSON(universityData.root_url + '/wp-json/wp/v2/posts?search=' + this.searchField.val(), posts => {
+  //         $.getJSON(universityData.root_url + '/wp-json/wp/v2/pages?search=' + this.searchField.val(), pages => {
+  //             $.getJSON(universityData.root_url + '/wp-json/wp/v2/event?search=' + this.searchField.val(), events => {
+  //                 $.getJSON(universityData.root_url + '/wp-json/wp/v2/professor?search=' + this.searchField.val(), profs => {
+  //                     var combinedResults = posts.concat(pages);
+  //                     // combinedResults = combinedResults.concat(events);
+  //                     // combinedResults = combinedResults.concat(profs);
+  //                     this.resultsDiv.html(`
+  //                     <h2 class="search-overlay__section-title">General Information</h2>
+  //                     ${combinedResults.length ? '<ul class="link-list min-list">' : '<p>No results</p>'}
+  //                     ${combinedResults.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join('')}
+  //                     ${combinedResults.length ? '</ul>' : ''}
+  //                     `);
+  //                     this.isSpinnerVisible = false;
+  //                 });
+  //             });
+  //         });
+  //     });
+  // }
+
 
   keyPressDispatcher(e) {
     if (e.keyCode == 83 && !this.isOverlayOpen && !jquery__WEBPACK_IMPORTED_MODULE_0___default()("input, textarea").is(':focus')) {
@@ -4034,6 +4059,8 @@ class Search {
   openOverlay() {
     this.searchOverlay.addClass("search-overlay--active");
     jquery__WEBPACK_IMPORTED_MODULE_0___default()('body').addClass("body-no-scroll");
+    this.searchField.val('');
+    setTimeout(() => this.searchField.focus(), 301);
     this.isOverlayOpen = true;
   }
 
