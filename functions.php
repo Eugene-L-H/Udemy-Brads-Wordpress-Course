@@ -53,6 +53,7 @@ require get_theme_file_path('/inc/search-route.php');
       
       wp_localize_script('main-university-js', 'universityData', array(
         'root_url' => get_site_url(),
+        'nonce' => wp_create_nonce('wp_rest')
       ));
   }
 
@@ -142,4 +143,5 @@ require get_theme_file_path('/inc/search-route.php');
   function ourLoginTitle() {
     return get_bloginfo('name');
   }
+
 ?>
