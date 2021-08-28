@@ -57,7 +57,8 @@
             while ($homepagePosts->have_posts()) {
                 $homepagePosts->the_post();
                 get_template_part('template-parts/content', get_post_type());
-            } wp_reset_postdata();?>
+            } 
+            wp_reset_postdata();?>
                 
 
     

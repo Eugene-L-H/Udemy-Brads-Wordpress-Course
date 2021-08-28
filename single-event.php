@@ -11,7 +11,9 @@
       <div class="metabox metabox--position-up metabox--with-home-link">
         <p>
           <a class="metabox__blog-home-link" href="<?php echo get_post_type_archive_link('event');?>"><i class="fa fa-home" aria-hidden="true"> Events Home
-          </i></a> <span class="metabox__main"><?php the_title();?>
+          </i></a> <span class="metabox__main"><?php
+          $eventDate = new DateTime(get_field('event_date'));
+          echo $eventDate->format('M') . ' ' . $eventDate->format('d') . ', ' . $eventDate->format('Y');?>
           </span>
         </p>
       </div>

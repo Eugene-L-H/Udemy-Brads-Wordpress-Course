@@ -2,29 +2,30 @@
   get_header(); 
   pageBanner(array(
     'title' => 'Search Results',
-    'subtitle' => 'You searched for &ldquo;' . get_search_query() . '&rdquo;'
+    'subtitle' => 'You searched for &ldquo;' . esc_html(get_search_query(false)) . '&rdquo;',
+    'photo' => get_theme_file_uri('/images/ocean.jpg')
   ));
 ?>
 
   <div class="container container--narrow page-section">
+
     <?php
-      while(have_posts()) {
-        the_post(); ?>
-        <div class="post-item">
-          <h2 class="headline headline--medium headline--post-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+      if (have_posts()) {
 
-          <div class="metabox">
-            <p>Posted by <?php the_author_posts_link(); ?> on <?php the_time('n.j.y'); ?> in <?php echo get_the_category_list(', ')?></p>
-          </div>
+        while (have_posts()) {
+          the_post();
+          get_template_part('template-parts/content', get_post_type());
+        }
+      
+        echo paginate_links();
 
-          <div class="generic-content">
-            <p><?php the_excerpt(); ?></p>
-            <p><a class="btn btn--blue" href="<?php echo the_permalink(); ?>">Continue reading &raquo;</a></p>
-          </div>
-        </div>
+      }
+      else {
+        echo '<h2 class="headline headline--small-plus">No results match that search.</h2><br>';
+      }
 
-    <?php } 
-      echo paginate_links();
+      get_search_form();
+
     ?>
   </div>
 
