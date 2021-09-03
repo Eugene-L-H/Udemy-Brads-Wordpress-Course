@@ -5923,7 +5923,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_HeroSlider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/HeroSlider */ "./src/modules/HeroSlider.js");
 /* harmony import */ var _modules_Search__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/Search */ "./src/modules/Search.js");
 /* harmony import */ var _modules_MyNotes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/MyNotes */ "./src/modules/MyNotes.js");
+/* harmony import */ var _modules_LikeBox__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/LikeBox */ "./src/modules/LikeBox.js");
  // Our modules / classes
+
 
 
 
@@ -5934,6 +5936,7 @@ const mobileMenu = new _modules_MobileMenu__WEBPACK_IMPORTED_MODULE_1__["default
 const heroSlider = new _modules_HeroSlider__WEBPACK_IMPORTED_MODULE_2__["default"]();
 const search = new _modules_Search__WEBPACK_IMPORTED_MODULE_3__["default"]();
 const myNotes = new _modules_MyNotes__WEBPACK_IMPORTED_MODULE_4__["default"]();
+const likeBox = new _modules_LikeBox__WEBPACK_IMPORTED_MODULE_5__["default"]();
 
 /***/ }),
 
@@ -5976,6 +5979,41 @@ class HeroSlider {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (HeroSlider);
+
+/***/ }),
+
+/***/ "./src/modules/LikeBox.js":
+/*!********************************!*\
+  !*** ./src/modules/LikeBox.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// import axios from "axios";
+class LikeBox {
+  constructor() {
+    if (document.querySelector('.like-box')) {
+      this.likeBox = document.querySelector(".like-box");
+      this.events();
+    }
+  } // Events
+
+
+  events() {
+    this.likeBox.addEventListener("click", () => this.likeButton());
+    console.log(this.likeBox);
+  } // Methods
+
+
+  likeButton() {
+    alert("Hello!");
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (LikeBox);
 
 /***/ }),
 
@@ -6036,6 +6074,7 @@ class MyNotes {
   events() {
     this.myNotes.addEventListener("click", e => this.clickHandler(e));
     document.querySelector(".submit-note").addEventListener("click", () => this.createNote());
+    alert(document.querySelector("#my-notes"));
   }
 
   clickHandler(e) {

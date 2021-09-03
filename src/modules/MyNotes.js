@@ -12,6 +12,8 @@ class MyNotes {
   events() {
     this.myNotes.addEventListener("click", e => this.clickHandler(e))
     document.querySelector(".submit-note").addEventListener("click", () => this.createNote())
+    
+    alert(document.querySelector("#my-notes"))
   }
 
   clickHandler(e) {
@@ -149,4 +151,4 @@ class MyNotes {
   }
 }
 
-export default MyNotes
+export default MyNotes;

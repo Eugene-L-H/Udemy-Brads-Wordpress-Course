@@ -11,6 +11,10 @@ function university_custom_rest() {
   register_rest_field('note', 'userNoteCount', array(
     'get_callback' => function() {return count_user_posts(get_current_user_id(),'note');}
   ));
+
+  register_rest_field('professor', 'likes', array(
+    'get_callback' => function() {return count_user_posts(get_current_user_id(),'note');}
+  ));
 }
 
 
@@ -102,6 +106,7 @@ function university_adjust_queries($query) {
 
 add_action('pre_get_posts', 'university_adjust_queries');
 
+
 // Redirect subscriber accounts out of admin and onto homepage
 add_action('admin_init', "redirectSubsToFrontend");
 
@@ -114,6 +119,7 @@ function redirectSubsToFrontend() {
   }
 }
 
+
 // Remove top admin bar for subscriber users
 add_action('wp_loaded', "noSubsAdminBar");
 
@@ -124,6 +130,7 @@ function noSubsAdminBar() {
     show_admin_bar(false);
   }
 }
+
 
 // Customize login screen
 add_filter('login_headerurl', 'ourHeaderUrl');

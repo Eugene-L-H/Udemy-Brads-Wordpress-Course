@@ -4,21 +4,30 @@
 
     while(have_posts()) {
         the_post(); 
-        pageBanner(array(
-          
-        ));?>
+        pageBanner();?>
 
       <div class="container container--narrow page-section">
           
         <div class="generic-content">
-            <div class="row group">
-                <div class="one-third">
-                    <?php the_post_thumbnail('professorPortrait');?>
-                </div> 
-                <div class="two-thirds">
-                    <?php the_content();?>
-                </div>
-            </div>
+          <div class="row group">
+              <div class="one-third">
+                <?php the_post_thumbnail('professorPortrait');?>
+              </div> 
+              <div class="two-thirds">
+
+                <?php 
+                  //$likes =
+                ?>
+
+                <span class="like-box">
+                  <i class="fa fa-heart-o" aria-hidden="true"></i>
+                  <i class="fa fa-heart" aria-hidden="true"></i>
+                  <span class="like-count"><?php $likes; ?></span>
+                </span>
+
+                <?php the_content();?>
+              </div>
+          </div>
         </div>
 
         <?php 
