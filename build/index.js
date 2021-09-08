@@ -5923,7 +5923,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_HeroSlider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/HeroSlider */ "./src/modules/HeroSlider.js");
 /* harmony import */ var _modules_Search__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/Search */ "./src/modules/Search.js");
 /* harmony import */ var _modules_MyNotes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/MyNotes */ "./src/modules/MyNotes.js");
-/* harmony import */ var _modules_LikeBox__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/LikeBox */ "./src/modules/LikeBox.js");
+/* harmony import */ var _modules_Like__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/Like */ "./src/modules/Like.js");
  // Our modules / classes
 
 
@@ -5936,7 +5936,7 @@ const mobileMenu = new _modules_MobileMenu__WEBPACK_IMPORTED_MODULE_1__["default
 const heroSlider = new _modules_HeroSlider__WEBPACK_IMPORTED_MODULE_2__["default"]();
 const search = new _modules_Search__WEBPACK_IMPORTED_MODULE_3__["default"]();
 const myNotes = new _modules_MyNotes__WEBPACK_IMPORTED_MODULE_4__["default"]();
-const likeBox = new _modules_LikeBox__WEBPACK_IMPORTED_MODULE_5__["default"]();
+const like = new _modules_Like__WEBPACK_IMPORTED_MODULE_5__["default"]();
 
 /***/ }),
 
@@ -5982,38 +5982,88 @@ class HeroSlider {
 
 /***/ }),
 
-/***/ "./src/modules/LikeBox.js":
-/*!********************************!*\
-  !*** ./src/modules/LikeBox.js ***!
-  \********************************/
+/***/ "./src/modules/Like.js":
+/*!*****************************!*\
+  !*** ./src/modules/Like.js ***!
+  \*****************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-// import axios from "axios";
-class LikeBox {
-  constructor() {
-    if (document.querySelector('.like-box')) {
-      this.likeBox = document.querySelector(".like-box");
-      this.events();
-    }
-  } // Events
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "jquery");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 
+
+class Like {
+  constructor() {
+    this.events();
+  }
 
   events() {
-    this.likeBox.addEventListener("click", () => this.likeButton());
-    console.log(this.likeBox);
-  } // Methods
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()('.like-box').on('click', this.ourClickDispatcher.bind(this));
+  } // methods
 
 
-  likeButton() {
-    alert("Hello!");
+  ourClickDispatcher(e) {
+    var likeBox = document.getElementsByClassName('like-box');
+    var likes = document.getElementsByClassName('like-count');
+    var likes = likes[0].getAttribute('data-likes');
+
+    if (likeBox[0].getAttribute('data-exists') == 'yes') {
+      this.deleteLike(likeBox, likes);
+    } else {
+      this.createLike(likeBox, likes);
+    }
+  }
+
+  createLike(likeBox, likes) {
+    // var likes = document.getElementsByClassName('like-count');
+    // var likes = likes[0].getAttribute('data-likes');
+    jquery__WEBPACK_IMPORTED_MODULE_0___default.a.ajax({
+      beforeSend: xhr => {
+        xhr.setRequestHeader('X-WP-Nonce', universityData.nonce);
+      },
+      url: universityData.root_url + '/wp-json/university/v1/manageLike',
+      type: 'POST',
+      data: {
+        'professorId': likeBox[0].getAttribute('data-professor')
+      },
+      success: response => {
+        likes++;
+        likeBox[0].setAttribute('data-exists', 'yes');
+        likeBox[0].getElementsByClassName('like-count')[0].innerHTML = likes;
+        console.log(response);
+      },
+      error: response => {
+        console.log(response);
+      }
+    });
+  }
+
+  deleteLike(likeBox, likes) {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default.a.ajax({
+      beforeSend: xhr => {
+        xhr.setRequestHeader('X-WP-Nonce', universityData.nonce);
+      },
+      url: universityData.root_url + '/wp-json/university/v1/manageLike',
+      type: 'DELETE',
+      success: response => {
+        // likes--;
+        likeBox[0].setAttribute('data-exists', 'no');
+        likeBox[0].getElementsByClassName('like-count')[0].innerHTML = likes;
+        console.log('Likes = ' + likes);
+        console.log(response);
+      },
+      error: response => {
+        console.log(response);
+      }
+    });
   }
 
 }
 
-/* harmony default export */ __webpack_exports__["default"] = (LikeBox);
+/* harmony default export */ __webpack_exports__["default"] = (Like);
 
 /***/ }),
 
@@ -6064,29 +6114,29 @@ __webpack_require__.r(__webpack_exports__);
 
 class MyNotes {
   constructor() {
-    if (document.querySelector("#my-notes")) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.defaults.headers.common["X-WP-Nonce"] = universityData.nonce;
-      this.myNotes = document.querySelector("#my-notes");
+    if (document.querySelector('#my-notes')) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.defaults.headers.common['X-WP-Nonce'] = universityData.nonce;
+      this.myNotes = document.querySelector('#my-notes');
       this.events();
     }
   }
 
   events() {
-    this.myNotes.addEventListener("click", e => this.clickHandler(e));
-    document.querySelector(".submit-note").addEventListener("click", () => this.createNote());
-    alert(document.querySelector("#my-notes"));
+    this.myNotes.addEventListener('click', e => this.clickHandler(e));
+    document.querySelector('.submit-note').addEventListener('click', () => this.createNote());
+    alert(document.querySelector('#my-notes'));
   }
 
   clickHandler(e) {
-    if (e.target.classList.contains("delete-note") || e.target.classList.contains("fa-trash-o")) this.deleteNote(e);
-    if (e.target.classList.contains("edit-note") || e.target.classList.contains("fa-pencil") || e.target.classList.contains("fa-times")) this.editNote(e);
-    if (e.target.classList.contains("update-note") || e.target.classList.contains("fa-arrow-right")) this.updateNote(e);
+    if (e.target.classList.contains('delete-note') || e.target.classList.contains('fa-trash-o')) this.deleteNote(e);
+    if (e.target.classList.contains('edit-note') || e.target.classList.contains('fa-pencil') || e.target.classList.contains('fa-times')) this.editNote(e);
+    if (e.target.classList.contains('update-note') || e.target.classList.contains('fa-arrow-right')) this.updateNote(e);
   }
 
   findNearestParentLi(el) {
     let thisNote = el;
 
-    while (thisNote.tagName != "LI") {
+    while (thisNote.tagName != 'LI') {
       thisNote = thisNote.parentElement;
     }
 
@@ -6097,7 +6147,7 @@ class MyNotes {
   editNote(e) {
     const thisNote = this.findNearestParentLi(e.target);
 
-    if (thisNote.getAttribute("data-state") == "editable") {
+    if (thisNote.getAttribute('data-state') == 'editable') {
       this.makeNoteReadOnly(thisNote);
     } else {
       this.makeNoteEditable(thisNote);
@@ -6105,75 +6155,75 @@ class MyNotes {
   }
 
   makeNoteEditable(thisNote) {
-    thisNote.querySelector(".edit-note").innerHTML = '<i class="fa fa-times" aria-hidden="true"></i> Cancel';
-    thisNote.querySelector(".note-title-field").removeAttribute("readonly");
-    thisNote.querySelector(".note-body-field").removeAttribute("readonly");
-    thisNote.querySelector(".note-title-field").classList.add("note-active-field");
-    thisNote.querySelector(".note-body-field").classList.add("note-active-field");
-    thisNote.querySelector(".update-note").classList.add("update-note--visible");
-    thisNote.setAttribute("data-state", "editable");
+    thisNote.querySelector('.edit-note').innerHTML = '<i class="fa fa-times" aria-hidden="true"></i> Cancel';
+    thisNote.querySelector('.note-title-field').removeAttribute('readonly');
+    thisNote.querySelector('.note-body-field').removeAttribute('readonly');
+    thisNote.querySelector('.note-title-field').classList.add('note-active-field');
+    thisNote.querySelector('.note-body-field').classList.add('note-active-field');
+    thisNote.querySelector('.update-note').classList.add('update-note--visible');
+    thisNote.setAttribute('data-state', 'editable');
   }
 
   makeNoteReadOnly(thisNote) {
-    thisNote.querySelector(".edit-note").innerHTML = '<i class="fa fa-pencil" aria-hidden="true"></i> Edit';
-    thisNote.querySelector(".note-title-field").setAttribute("readonly", "true");
-    thisNote.querySelector(".note-body-field").setAttribute("readonly", "true");
-    thisNote.querySelector(".note-title-field").classList.remove("note-active-field");
-    thisNote.querySelector(".note-body-field").classList.remove("note-active-field");
-    thisNote.querySelector(".update-note").classList.remove("update-note--visible");
-    thisNote.setAttribute("data-state", "cancel");
+    thisNote.querySelector('.edit-note').innerHTML = '<i class="fa fa-pencil" aria-hidden="true"></i> Edit';
+    thisNote.querySelector('.note-title-field').setAttribute('readonly', 'true');
+    thisNote.querySelector('.note-body-field').setAttribute('readonly', 'true');
+    thisNote.querySelector('.note-title-field').classList.remove('note-active-field');
+    thisNote.querySelector('.note-body-field').classList.remove('note-active-field');
+    thisNote.querySelector('.update-note').classList.remove('update-note--visible');
+    thisNote.setAttribute('data-state', 'cancel');
   }
 
   async deleteNote(e) {
     const thisNote = this.findNearestParentLi(e.target);
 
     try {
-      const response = await axios__WEBPACK_IMPORTED_MODULE_0___default.a.delete(universityData.root_url + "/wp-json/wp/v2/note/" + thisNote.getAttribute("data-id"));
+      const response = await axios__WEBPACK_IMPORTED_MODULE_0___default.a.delete(universityData.root_url + '/wp-json/wp/v2/note/' + thisNote.getAttribute('data-id'));
       thisNote.style.height = `${thisNote.offsetHeight}px`;
       setTimeout(function () {
-        thisNote.classList.add("fade-out");
+        thisNote.classList.add('fade-out');
       }, 20);
       setTimeout(function () {
         thisNote.remove();
       }, 401);
 
       if (response.data.userNoteCount < 5) {
-        document.querySelector(".note-limit-message").classList.remove("active");
+        document.querySelector('.note-limit-message').classList.remove('active');
       }
     } catch (e) {
-      console.log("Sorry");
+      console.log('Sorry');
     }
   }
 
   async updateNote(e) {
     const thisNote = this.findNearestParentLi(e.target);
     var ourUpdatedPost = {
-      "title": thisNote.querySelector(".note-title-field").value,
-      "content": thisNote.querySelector(".note-body-field").value
+      'title': thisNote.querySelector('.note-title-field').value,
+      'content': thisNote.querySelector('.note-body-field').value
     };
 
     try {
-      const response = await axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(universityData.root_url + "/wp-json/wp/v2/note/" + thisNote.getAttribute("data-id"), ourUpdatedPost);
+      const response = await axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(universityData.root_url + '/wp-json/wp/v2/note/' + thisNote.getAttribute('data-id'), ourUpdatedPost);
       this.makeNoteReadOnly(thisNote);
     } catch (e) {
-      console.log("Sorry");
+      console.log('Sorry');
     }
   }
 
   async createNote() {
     var ourNewPost = {
-      "title": document.querySelector(".new-note-title").value,
-      "content": document.querySelector(".new-note-body").value,
-      "status": "publish"
+      'title': document.querySelector('.new-note-title').value,
+      'content': document.querySelector('.new-note-body').value,
+      'status': 'publish'
     };
 
     try {
-      const response = await axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(universityData.root_url + "/wp-json/wp/v2/note/", ourNewPost);
+      const response = await axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(universityData.root_url + '/wp-json/wp/v2/note/', ourNewPost);
 
-      if (response.data != "You have reached your note limit.") {
-        document.querySelector(".new-note-title").value = "";
-        document.querySelector(".new-note-body").value = "";
-        document.querySelector("#my-notes").insertAdjacentHTML("afterbegin", ` <li data-id="${response.data.id}" class="fade-in-calc">
+      if (response.data != 'You have reached your note limit.') {
+        document.querySelector('.new-note-title').value = '';
+        document.querySelector('.new-note-body').value = '';
+        document.querySelector('#my-notes').insertAdjacentHTML('afterbegin', ` <li data-id="${response.data.id}" class="fade-in-calc">
             <input readonly class="note-title-field" value="${response.data.title.raw}">
             <span class="edit-note"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</span>
             <span class="delete-note"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</span>
@@ -6183,23 +6233,23 @@ class MyNotes {
 
         let finalHeight; // browser needs a specific height to transition to, you can't transition to 'auto' height
 
-        let newlyCreated = document.querySelector("#my-notes li"); // give the browser 30 milliseconds to have the invisible element added to the DOM before moving on
+        let newlyCreated = document.querySelector('#my-notes li'); // give the browser 30 milliseconds to have the invisible element added to the DOM before moving on
 
         setTimeout(function () {
           finalHeight = `${newlyCreated.offsetHeight}px`;
-          newlyCreated.style.height = "0px";
+          newlyCreated.style.height = '0px';
         }, 30); // give the browser another 20 milliseconds to count the height of the invisible element before moving on
 
         setTimeout(function () {
-          newlyCreated.classList.remove("fade-in-calc");
+          newlyCreated.classList.remove('fade-in-calc');
           newlyCreated.style.height = finalHeight;
         }, 50); // wait the duration of the CSS transition before removing the hardcoded calculated height from the element so that our design is responsive once again
 
         setTimeout(function () {
-          newlyCreated.style.removeProperty("height");
+          newlyCreated.style.removeProperty('height');
         }, 450);
       } else {
-        document.querySelector(".note-limit-message").classList.add("active");
+        document.querySelector('.note-limit-message').classList.add('active');
       }
     } catch (e) {
       console.error(e);
@@ -6229,11 +6279,11 @@ class Search {
   // 1. describe and create/initiate our object
   constructor() {
     // this.addSearchHTML()
-    this.resultsDiv = document.querySelector("#search-overlay__results");
-    this.openButton = document.querySelectorAll(".js-search-trigger");
-    this.closeButton = document.querySelector(".search-overlay__close");
-    this.searchOverlay = document.querySelector(".search-overlay");
-    this.searchField = document.querySelector("#search-term");
+    this.resultsDiv = document.querySelector('#search-overlay__results');
+    this.openButton = document.querySelectorAll('.js-search-trigger');
+    this.closeButton = document.querySelector('.search-overlay__close');
+    this.searchOverlay = document.querySelector('.search-overlay');
+    this.searchField = document.querySelector('#search-term');
     this.isOverlayOpen = false;
     this.isSpinnerVisible = false;
     this.previousValue;
@@ -6244,14 +6294,14 @@ class Search {
 
   events() {
     this.openButton.forEach(el => {
-      el.addEventListener("click", e => {
+      el.addEventListener('click', e => {
         e.preventDefault();
         this.openOverlay();
       });
     });
-    this.closeButton.addEventListener("click", () => this.closeOverlay());
-    document.addEventListener("keydown", e => this.keyPressDispatcher(e));
-    this.searchField.addEventListener("keyup", () => this.typingLogic());
+    this.closeButton.addEventListener('click', () => this.closeOverlay());
+    document.addEventListener('keydown', e => this.keyPressDispatcher(e));
+    this.searchField.addEventListener('keyup', () => this.typingLogic());
   } // 3. methods (function, action...)
 
 
@@ -6267,7 +6317,7 @@ class Search {
 
         this.typingTimer = setTimeout(this.getResults.bind(this), 750);
       } else {
-        this.resultsDiv.innerHTML = "";
+        this.resultsDiv.innerHTML = '';
         this.isSpinnerVisible = false;
       }
     }
@@ -6277,23 +6327,23 @@ class Search {
 
   async getResults() {
     try {
-      const response = await axios__WEBPACK_IMPORTED_MODULE_0___default.a.get(universityData.root_url + "/wp-json/university/v1/search?term=" + this.searchField.value);
+      const response = await axios__WEBPACK_IMPORTED_MODULE_0___default.a.get(universityData.root_url + '/wp-json/university/v1/search?term=' + this.searchField.value);
       const results = response.data;
       this.resultsDiv.innerHTML = `
         <div class="row">
           <div class="one-third">
             ${console.log(results)}
             <h2 class="search-overlay__section-title">General Information</h2>
-            ${results.generalInfo.length ? '<ul class="link-list min-list">' : "<p>No general information matches that search.</p>"}
-              ${results.generalInfo.map(item => `<li><a href="${item.permalink}">${item.title}</a> ${item.postType == "post" ? `by ${item.authorName}` : ""}</li>`).join("")}
-            ${results.generalInfo.length ? "</ul>" : ""}
+            ${results.generalInfo.length ? '<ul class="link-list min-list">' : '<p>No general information matches that search.</p>'}
+              ${results.generalInfo.map(item => `<li><a href="${item.permalink}">${item.title}</a> ${item.postType == 'post' ? `by ${item.authorName}` : ''}</li>`).join('')}
+            ${results.generalInfo.length ? '</ul>' : ''}
           </div>
 
           <div class="one-third">
             <h2 class="search-overlay__section-title">Programs</h2>
             ${results.programs.length ? '<ul class="link-list min-list">' : `<p>No programs match that search. <a href="${universityData.root_url}/programs">View all programs</a></p>`}
-              ${results.programs.map(item => `<li><a href="${item.permalink}">${item.title}</a></li>`).join("")}
-            ${results.programs.length ? "</ul>" : ""}
+              ${results.programs.map(item => `<li><a href="${item.permalink}">${item.title}</a></li>`).join('')}
+            ${results.programs.length ? '</ul>' : ''}
 
             <h2 class="search-overlay__section-title">Professors</h2>
             ${results.professors.length ? '<ul class="professor-cards">' : `<p>No professors match that search.</p>`}
@@ -6304,13 +6354,13 @@ class Search {
                     <span class="professor-card__name">${item.title}</span>
                   </a>
                 </li>
-              `).join("")}
-            ${results.professors.length ? "</ul>" : ""}
+              `).join('')}
+            ${results.professors.length ? '</ul>' : ''}
           </div>
 
           <div class="one-third">
             <h2 class="search-overlay__section-title">Events</h2>
-            ${results.events.length ? "" : `<p>No events match that search. <a href="${universityData.root_url}/events">View all events</a></p>`}
+            ${results.events.length ? '' : `<p>No events match that search. <a href="${universityData.root_url}/events">View all events</a></p>`}
               ${results.events.map(item => `
                 <div class="event-summary">
                   <a class="event-summary__date t-center" href="${item.permalink}">
@@ -6322,7 +6372,7 @@ class Search {
                     <p>${item.description} <a href="${item.permalink}" class="nu gray">Learn more</a></p>
                   </div>
                 </div>
-              `).join("")}
+              `).join('')}
 
           </div>
         </div>
@@ -6334,7 +6384,7 @@ class Search {
   }
 
   keyPressDispatcher(e) {
-    if (e.keyCode == 83 && !this.isOverlayOpen && document.activeElement.tagName != "INPUT" && document.activeElement.tagName != "TEXTAREA") {
+    if (e.keyCode == 83 && !this.isOverlayOpen && document.activeElement.tagName != 'INPUT' && document.activeElement.tagName != 'TEXTAREA') {
       this.openOverlay();
     }
 
@@ -6344,18 +6394,18 @@ class Search {
   }
 
   openOverlay() {
-    this.searchOverlay.classList.add("search-overlay--active");
-    document.body.classList.add("body-no-scroll");
-    this.searchField.value = "";
+    this.searchOverlay.classList.add('search-overlay--active');
+    document.body.classList.add('body-no-scroll');
+    this.searchField.value = '';
     setTimeout(() => this.searchField.focus(), 301);
     this.isOverlayOpen = true;
     return false;
   }
 
   closeOverlay() {
-    this.searchOverlay.classList.remove("search-overlay--active");
-    document.body.classList.remove("body-no-scroll");
-    console.log("our close method just ran!");
+    this.searchOverlay.classList.remove('search-overlay--active');
+    document.body.classList.remove('body-no-scroll');
+    console.log('our close method just ran!');
     this.isOverlayOpen = false;
   } // addSearchHTML() {
   //   document.body.insertAdjacentHTML(
@@ -6381,6 +6431,17 @@ class Search {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (Search);
+
+/***/ }),
+
+/***/ "jquery":
+/*!*************************!*\
+  !*** external "jQuery" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["jQuery"]; }());
 
 /***/ })
 
